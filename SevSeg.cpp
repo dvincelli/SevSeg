@@ -60,6 +60,7 @@ SevSeg::SevSeg()
   // Initial value
   ledOnTime = 2000; // Corresponds to a brightness of 100
   numDigits = 0;
+  isColonEnabled = false;
 }
 
 
@@ -123,6 +124,29 @@ void SevSeg::begin(byte hardwareConfig, byte numDigitsIn,
   setNewNum(0,0); // Initialise the number displayed to 0
 }
 
+void SevSeg::begin(byte hardwareConfig, byte numDigitsIn, byte digitPinsIn[], byte segmentPinsIn[],
+                   byte colonDigitPinIn, byte colonSegmentPinIn)
+{
+    SevSeg::begin(hardwareConfig, numDigitsIn, digitPinsIn, segmentPinsIn);
+    colonDigitPin = colonDigitPinIn;
+    colonSegmentPin = colonSegmentPinIn;
+    pinMode(colonSegmentPin, OUTPUT);
+    digitalWrite(colonSegmentPin, segmentOff);
+    pinMode(colonDigitPin, OUTPUT);
+    digitalWrite(colonDigitPin, digitOff);
+}
+
+void SevSeg::refreshColon() {
+    if (isColonEnabled) {
+       digitalWrite(colonDigitPin, digitOn);
+       digitalWrite(colonSegmentPin, segmentOn);
+
+       delayMicroseconds(ledOnTime);
+
+       digitalWrite(colonDigitPin, digitOff);
+       digitalWrite(colonSegmentPin, segmentOff);
+   }
+}
 
 // refreshDisplay
 /******************************************************************************/
@@ -155,6 +179,9 @@ void SevSeg::refreshDisplay(){
     }
     digitalWrite(segmentPins[segmentNum], segmentOff);
   }
+
+  SevSeg::refreshColon();
+
 }
 
 #else
@@ -180,6 +207,8 @@ void SevSeg::refreshDisplay(){
     }
     digitalWrite(digitPins[digitNum], digitOff);
   }
+
+  SevSeg::refreshColon();
 }
 #endif
 
@@ -327,6 +356,14 @@ void SevSeg::setDigitCodes(byte digits[], byte decPlaces) {
      digitCodes[digitNum] |= B10000000;
     }
   }
+}
+
+void SevSeg::enableColon() {
+    isColonEnabled = true;
+}
+
+void SevSeg::disableColon() {
+    isColonEnabled = false;
 }
 
 /// END ///

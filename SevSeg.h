@@ -52,6 +52,8 @@ public:
 
   void refreshDisplay();
   void begin(byte hardwareConfig, byte numDigitsIn, byte digitPinsIn[], byte segmentPinsIn[]);
+  void begin(byte hardwareConfig, byte numDigitsIn, byte digitPinsIn[], byte segmentPinsIn[],
+             byte colonDigitPinIn, byte colonSegmentPinIn);
   void setBrightness(int brightnessIn); // A number from 0..100
 
   void setNumber(long numToShow, byte decPlaces);
@@ -61,6 +63,9 @@ public:
   void setNumber(char numToShow, byte decPlaces);
   void setNumber(byte numToShow, byte decPlaces);
   void setNumber(float numToShow, byte decPlaces);
+  void enableColon();
+  void disableColon();
+  void refreshColon();
 
 private:
   void setNewNum(long numToShow, byte decPlaces);
@@ -68,10 +73,13 @@ private:
   void setDigitCodes(byte nums[], byte decPlaces);
 
   boolean digitOn,digitOff,segmentOn,segmentOff;
+  boolean isColonEnabled;
   byte digitPins[MAXNUMDIGITS];
   byte segmentPins[8];
   byte numDigits;
   byte digitCodes[MAXNUMDIGITS];
+  byte colonDigitPin;
+  byte colonSegmentPin;
   int ledOnTime;
   const static long powersOf10[10];
 
